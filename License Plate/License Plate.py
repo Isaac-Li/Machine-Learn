@@ -94,8 +94,8 @@ if __name__ =="__main__":
     print '超参数：\f', lasso_model.best_params_
 
     y_lasso_hat=lasso_model.predict(np.array(x_test))
-    print  '训练数据准确度：\f',lasso_model.score(x_train, y_train)
-    print  '测试数据准确度：\f',lasso_model.score(x_test, y_test)
+    print  '训练数据 R2：\f',lasso_model.score(x_train, y_train)
+    print  '测试数据 R2：\f',lasso_model.score(x_test, y_test)
     mse_lasso=np.average((y_lasso_hat-np.array(y_test))**2)
     rmse_lasso=np.sqrt(mse_lasso)
     print mse_lasso, rmse_lasso
@@ -124,15 +124,23 @@ if __name__ =="__main__":
     plt.show()
 
     # ----------------输入下月数据进行预测--------------------------------
-    x_March=[[3,10000,200000,86000],[3,10000,210000,86000],[3,10000,220000,86000],[3,10000,230000,86000],[3,10000,240000,86000],[3,10000,250000,86000]]
+    x_March=[[3,10356,200000,86000],[3,10356,210000,86000],[3,10356,220000,86000],[3,10356,230000,86000],[3,10356,240000,86000],[3,10356,262010,86000]]
     print x_March
-    y_March_hat=lasso_model.predict(x_March)
+    arr_March=np.array(x_March)
+    y_March_hat=lasso_model.predict(arr_March)
     print y_March_hat
-
+    y_Max=max(y_March_hat)
     t = np.arange(len(x_March))
     mpl.rcParams['font.sans-serif'] = [u'simHei']
     mpl.rcParams['axes.unicode_minus'] = False
+    plt.xlim(t.min()-0.5,t.max()+1)
+    plt.ylim(0, y_Max+15000)
+
+    plt.xticks(t, arr_March[:,2])
+    plt.xlabel(u'参拍人数')
+    plt.ylabel(u'预测成交价格')
     rects1= plt.bar(t, y_March_hat,width=0.35, facecolor = 'yellowgreen',edgecolor = 'white')
+
     plt.title(u'上海沪牌--3月份预测价格', fontsize=18)
 
 
