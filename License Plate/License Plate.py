@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.linear_model import LinearRegression, Lasso, Ridge, BayesianRidge
 from sklearn.model_selection import GridSearchCV
 
 
@@ -75,6 +75,7 @@ if __name__ =="__main__":
     print "mse & rmse:", mse, rmse
     print y_hat
 
+
     t=np.arange(len(x_test))
     plt.plot(t, y_test, 'ro-',linewidth=2,  label=u'真实数据')
     plt.plot(t, y_hat, 'g-', linewidth=2, label=u'预测数据')
@@ -112,19 +113,35 @@ if __name__ =="__main__":
     plt.grid()
     plt.show()
 
+    # BayesianRidge mode
+    clf=BayesianRidge()
+    clf.fit(x_train, y_train)
+
+    y_Bayesian_hat=clf.predict(x_test)
+    print 'y_Baysian_hat', y_Bayesian_hat
+    print clf.coef_
+
+    #数据对比
+
     y_lasso_hat = lasso_model.predict(np.array(x))
+    y_Bayesian_alldata_hat=clf.predict(np.array(x))
+    y_linreg_alldata_hat=linreg.predict(np.array(x))
     t = np.arange(len(x))
     mpl.rcParams['font.sans-serif'] = [u'simHei']
     mpl.rcParams['axes.unicode_minus'] = False
     plt.plot(t, y, 'r-', linewidth=2, label=u'真实数据')
-    plt.plot(t, y_lasso_hat, 'g-', linewidth=2, label=u'预测数据')
+    plt.plot(t, y_linreg_alldata_hat, 'm-', linewidth=2, label=u'Lasso 预测数据')
+    plt.plot(t, y_lasso_hat, 'g-', linewidth=2, label=u'Lasso 预测数据')
+    plt.plot(t, y_Bayesian_alldata_hat, 'b-', linewidth=2, label=u'BaysianRidge 预测数据')
     plt.title(u'线性回归预测价格', fontsize=18)
     plt.legend(loc='upper left')
     plt.grid()
     plt.show()
 
+
+
     # ----------------输入下月数据进行预测--------------------------------
-    x_March=[[3,10356,200000,86000],[3,10356,210000,86000],[3,10356,220000,86000],[3,10356,230000,86000],[3,10356,240000,86000],[3,10356,262010,86000]]
+    x_March=[[4,12196,200000,87900],[4,12196,210000,87900],[4,12196,220000,87900],[4,12196,230000,87900],[4,12196,240000,87900],[4,12196,262010,87900]]
     print x_March
     arr_March=np.array(x_March)
     y_March_hat=lasso_model.predict(arr_March)
